@@ -96,8 +96,9 @@ const useCanvas = function () {
       const canvasRef = ref.current;
 
       if (canvasRef) {
-        const { offsetHeight, offsetWidth } = canvasRef;
-        setDimensions({ width: offsetWidth, height: offsetHeight });
+        const { offsetHeight: height, offsetWidth: width } = canvasRef;
+        console.log(canvasRef.offsetHeight);
+        setDimensions({ width: width, height: height });
       }
     };
 
@@ -113,7 +114,7 @@ const useCanvas = function () {
   return { ref, dimensions };
 };
 
-const Canvas: React.FC<CanvasProps> = ({ canvasData, onClick }) => {
+const Canvas: React.FC<CanvasProps> = ({ canvasData }) => {
   const { ref, dimensions } = useCanvas();
 
   useEffect(() => {
@@ -122,35 +123,14 @@ const Canvas: React.FC<CanvasProps> = ({ canvasData, onClick }) => {
     }
   }, [ref, dimensions, canvasData]);
 
-  const handleCanvasClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    const rect = canvas?.getBoundingClientRect();
-
-    if (canvas && rect) {
-      const mouseX = (event.clientX - rect.left) * (canvas.width / rect.width);
-      const mouseY = (event.clientY - rect.top) * (canvas.height / rect.height);
-
-      canvasData.entities.forEach((entity, index) => {
-        if (
-          mouseX >= entity.x &&
-          mouseX <= entity.x + entity.width &&
-          mouseY >= entity.y &&
-          mouseY <= entity.y + entity.height
-        ) {
-          onClick(index);
-        }
-      });
-    }
-  };
-
   return (
     <div className="fixed top-0 right-0 bottom-0 left-0">
-      <canvas
-        ref={ref}
-        id="canvas"
-        className="w-full h-full" // Apply Tailwind CSS classes for full width and height
-        onClick={handleCanvasClick}
-      ></canvas>
+      <div className="flex w-full h-full">
+        <div className="grow lg:border-r h-full">
+          <canvas ref={ref} id="canvas" className="w-full h-full"></canvas>
+        </div>
+        <div className="pb-12 hidden lg:block w-80"></div>
+      </div>
     </div>
   );
 };
