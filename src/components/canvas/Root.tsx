@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Canvas from "./Canvas";
-import ControlPanel from "./ControlPanel";
 import * as types from "./types";
+import ControlPanel from "./ControlPanel";
 
 const App: React.FC = () => {
   const [canvasData, setCanvasData] = useState<types.Canvas>(
@@ -31,13 +31,19 @@ const App: React.FC = () => {
 
   return (
     <div className="fixed top-0 right-0 bottom-0 left-0">
-      <Canvas canvasData={canvasData} onClick={updateShapeColor} />
-      {/* <ControlPanel
-        onAddRectangle={addRectangle}
-        onDurationChange={setDuration}
-        onPlayAnimation={playAnimation}
-        onDownloadProject={downloadProject}
-      /> */}
+      <div className="fixed top-0 right-0 bottom-0 left-0 flex">
+        <div className="grow lg:border-r h-full">
+          <Canvas canvasData={canvasData} onClick={updateShapeColor} />
+        </div>
+        <aside className="p-6 flex" style={{ minWidth: "300px" }}>
+          <ControlPanel
+            onAddRectangle={addRectangle}
+            onDurationChange={setDuration}
+            onPlayAnimation={playAnimation}
+            onDownloadProject={downloadProject}
+          />
+        </aside>
+      </div>
     </div>
   );
 };

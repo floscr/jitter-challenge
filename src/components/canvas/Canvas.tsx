@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import * as types from "./types";
+import { cssVarHsla } from "../../lib/css.ts";
 
 interface CanvasProps {
   canvasData: types.Canvas;
@@ -15,14 +16,14 @@ const drawAxisLines = (
   ctx.beginPath();
   ctx.moveTo(0, canvas.height / 2 / ratio);
   ctx.lineTo(canvas.width / ratio, canvas.height / 2 / ratio);
-  ctx.strokeStyle = "rgb(228, 228, 231)";
+  ctx.strokeStyle = cssVarHsla("--border");
   ctx.stroke();
 
   // Draw Y-axis
   ctx.beginPath();
   ctx.moveTo(canvas.width / 2 / ratio, 0);
   ctx.lineTo(canvas.width / 2 / ratio, canvas.height / ratio);
-  ctx.strokeStyle = "rgb(228, 228, 231)";
+  ctx.strokeStyle = cssVarHsla("--border");
   ctx.stroke();
 };
 
@@ -53,7 +54,9 @@ const updateCanvas = (
     const centerX = canvas.width / 2 / ratio;
     const centerY = canvas.height / 2 / ratio;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Clear the initial rectangle
+    ctx.fillStyle = cssVarHsla("--muted");
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     drawAxisLines(ctx, canvas, ratio);
 
@@ -68,7 +71,8 @@ const updateCanvas = (
         x + entity.width / ratio / 2,
         y + entity.height / ratio / 2,
       );
-      ctx.rotate((entity.rotation * Math.PI) / 180); // Convert degrees to radians
+      const radians = (entity.rotation * Math.PI) / 180;
+      ctx.rotate(radians);
       ctx.translate(
         -(x + entity.width / ratio / 2),
         -(y + entity.height / ratio / 2),
@@ -97,7 +101,6 @@ const useCanvas = function () {
 
       if (canvasRef) {
         const { offsetHeight: height, offsetWidth: width } = canvasRef;
-        console.log(canvasRef.offsetHeight);
         setDimensions({ width: width, height: height });
       }
     };
@@ -116,6 +119,7 @@ const useCanvas = function () {
 
 const Canvas: React.FC<CanvasProps> = ({ canvasData }) => {
   const { ref, dimensions } = useCanvas();
+  console.log(dimensions);
 
   useEffect(() => {
     if (ref.current && dimensions) {
@@ -123,16 +127,7 @@ const Canvas: React.FC<CanvasProps> = ({ canvasData }) => {
     }
   }, [ref, dimensions, canvasData]);
 
-  return (
-    <div className="fixed top-0 right-0 bottom-0 left-0">
-      <div className="flex w-full h-full">
-        <div className="grow lg:border-r h-full">
-          <canvas ref={ref} id="canvas" className="w-full h-full"></canvas>
-        </div>
-        <div className="pb-12 hidden lg:block w-80"></div>
-      </div>
-    </div>
-  );
+  return <canvas ref={ref} id="canvas" className="w-full h-full"></canvas>;
 };
 
 export default Canvas;
