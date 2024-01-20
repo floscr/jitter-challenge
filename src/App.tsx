@@ -1,11 +1,8 @@
 import React from "react";
+import CanvasRoot from "./components/canvas/Root";
 
 function App() {
-  return (
-    <div>
-      <main></main>
-    </div>
-  );
+  return <CanvasRoot></CanvasRoot>;
 }
 
 export default App;
