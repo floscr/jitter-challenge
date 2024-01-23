@@ -2,6 +2,8 @@ type Duration = number;
 
 export type PlayState = "playing" | "paused";
 
+export const MIN_DURATION = 1;
+
 export interface Timeline {
   playState: PlayState;
   duration: Duration;
@@ -51,6 +53,6 @@ export const updateDuration = function (
   return {
     ...timeline,
     playState: "paused",
-    duration: duration,
+    duration: Math.max(MIN_DURATION, duration),
   };
 };

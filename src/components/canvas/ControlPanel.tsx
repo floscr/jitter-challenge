@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import * as timeline from "@/types/timeline";
 
 interface ControlPanelProps {
   onAddRectangle: () => void;
@@ -10,14 +11,20 @@ interface ControlPanelProps {
   onDownloadProject: () => void;
 }
 
-const DEFAULT_DURATION = 60;
-
 const ControlPanel: React.FC<ControlPanelProps> = ({
+  timelineState,
+  setTimelineState,
   onAddRectangle,
-  onDurationChange,
-  onPlayAnimation,
   onDownloadProject,
 }) => {
+  const onDurationChange = useCallback(
+    function (e: ChangeEvent<HTMLInputElement>): void {
+      const duration = Number(e.target.value);
+      setTimelineState(timeline.updateDuration(duration, timelineState));
+    },
+    [timelineState, setTimelineState],
+  );
+
   return (
     <div className="flex flex-col grow space-y-6">
       <div className="flex flex-col space-y-6">
@@ -26,9 +33,9 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
           <Label htmlFor="picture">Duration</Label>
           <Input
             type="number"
-            min="1"
-            defaultValue={DEFAULT_DURATION}
-            onChange={(e) => onDurationChange(Number(e.target.value))}
+            min={timeline.MIN_DURATION}
+            value={timelineState.duration}
+            onChange={onDurationChange}
           />
         </div>
         <Button onClick={onPlayAnimation}>Play</Button>

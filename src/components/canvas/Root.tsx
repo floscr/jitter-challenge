@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import Canvas from "./Canvas";
 import * as types from "./types";
+import * as timeline from "../../types/timeline.tsx";
 import ControlPanel from "./ControlPanel";
 
 const App: React.FC = () => {
   const [canvasData, setCanvasData] = useState<types.Canvas>(
     types.exampleCanvas,
   );
-  const [duration, setDuration] = useState<number>(1); // default duration is 1 second
+  const [timelineState, setTimelineState] = useState<timeline.Timeline>(
+    timeline.init(),
+  );
 
   const addRectangle = () => {
     // Implement logic to add a random rectangular shape to the scene
@@ -33,12 +36,18 @@ const App: React.FC = () => {
     <div className="fixed top-0 right-0 bottom-0 left-0">
       <div className="fixed top-0 right-0 bottom-0 left-0 flex">
         <div className="grow lg:border-r h-full">
-          <Canvas canvasData={canvasData} onClick={updateShapeColor} />
+          <Canvas
+            canvasData={canvasData}
+            timelineState={timelineState}
+            setTimelineState={setTimelineState}
+            onClick={updateShapeColor}
+          />
         </div>
         <aside className="p-6 flex" style={{ minWidth: "300px" }}>
           <ControlPanel
+            timelineState={timelineState}
+            setTimelineState={setTimelineState}
             onAddRectangle={addRectangle}
-            onDurationChange={setDuration}
             onPlayAnimation={playAnimation}
             onDownloadProject={downloadProject}
           />
