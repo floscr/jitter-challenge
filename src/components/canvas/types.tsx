@@ -12,7 +12,7 @@ export interface Rectangle {
 export type Entity = Rectangle;
 
 export interface Canvas {
-  entities: Array<Entitiy>;
+  entities: Array<Entity>;
 }
 
 export const defaultCanvas = {
