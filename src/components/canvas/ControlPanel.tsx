@@ -20,7 +20,16 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   const onDurationChange = useCallback(
     function (e: ChangeEvent<HTMLInputElement>): void {
       const duration = Number(e.target.value);
-      setTimelineState(timeline.updateDuration(duration, timelineState));
+      const nextState = timeline.updateDuration(duration, timelineState);
+      setTimelineState(nextState);
+    },
+    [timelineState, setTimelineState],
+  );
+
+  const onPlayPauseClick = useCallback(
+    function (): void {
+      const nextState = timeline.togglePlayPause(timelineState);
+      setTimelineState(nextState);
     },
     [timelineState, setTimelineState],
   );
@@ -38,7 +47,11 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
             onChange={onDurationChange}
           />
         </div>
-        <Button onClick={onPlayAnimation}>Play</Button>
+        {timeline.isPaused(timelineState) ? (
+          <Button onClick={onPlayPauseClick}>Play</Button>
+        ) : (
+          <Button onClick={onPlayPauseClick}>Pause</Button>
+        )}
       </div>
       <div className="flex flex-col space-y-3">
         <Button onClick={onDownloadProject}>Import</Button>

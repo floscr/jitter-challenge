@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import * as types from "./types";
 import { cssVarHsla } from "../../lib/css.ts";
+import * as timeline from "@/types/timeline.tsx";
 
 interface CanvasProps {
   canvasData: types.Canvas;
@@ -117,9 +118,9 @@ const useCanvas = function () {
   return { ref, dimensions };
 };
 
-const Canvas: React.FC<CanvasProps> = ({ canvasData }) => {
+const Canvas: React.FC<CanvasProps> = ({ canvasData, timelineState }) => {
   const { ref, dimensions } = useCanvas();
-  console.log(dimensions);
+  const timelineRef = useRef<timeline.Timeline | null>(null);
 
   useEffect(() => {
     if (ref.current && dimensions) {
