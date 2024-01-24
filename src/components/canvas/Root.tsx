@@ -12,12 +12,10 @@ const App: React.FC = () => {
     timeline.init(),
   );
 
-  const onAddRectangle = useCallback(
-    function () {
-      setTimelineState(timeline.pause(timelineState));
-    },
-    [timelineState],
-  );
+  const onAddRectangle = useCallback(function () {
+    setTimelineState(timeline.pause);
+    setCanvasData(types.addRandomRectangleEntity);
+  }, []);
 
   return (
     <div className="fixed top-0 right-0 bottom-0 left-0">
