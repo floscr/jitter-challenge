@@ -268,7 +268,7 @@ const Canvas: React.FC<CanvasProps> = ({
         onRandomizeRectangleColor(clickedEntity.id);
       }
     },
-    [canvasData, onRandomizeRectangleColor],
+    [canvasData, onRandomizeRectangleColor, ref],
   );
 
   return (
