@@ -30,7 +30,7 @@ export const play = function (timeline: Timeline): Timeline {
   return {
     ...timeline,
     playState: PlayState.Playing,
-    startTime: Date.now(),
+    startTime: performance.now(),
   };
 };
 

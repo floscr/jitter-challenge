@@ -132,7 +132,8 @@ function animateCanvasEntities({
   timelineState: timeline.Timeline;
 }): void {
   function draw() {
-    const currentTime = Date.now();
+    const currentTime = performance.now();
+
     const elapsed = currentTime - timelineState.startTime;
 
     const progress = match(timelineState)
