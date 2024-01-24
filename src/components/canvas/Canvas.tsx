@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import * as types from "./types";
 import { cssVarHsla } from "../../lib/css.ts";
 import { match } from "ts-pattern";
+import { PlayState } from "@/types/timeline.tsx";
 import * as timeline from "@/types/timeline.tsx";
 
 interface CanvasProps {
@@ -135,7 +136,7 @@ function animateCanvasEntities({
     const elapsed = currentTime - timelineState.startTime;
 
     const progress = match(timelineState)
-      .with({ playState: "playing" }, () => {
+      .with({ playState: PlayState.Playing }, () => {
         const playingProgress = Math.min(
           elapsed / timelineState.duration / 1000,
           1,
@@ -143,7 +144,7 @@ function animateCanvasEntities({
         progressRef.current = playingProgress;
         return playingProgress;
       })
-      .with({ playState: "paused" }, () => {
+      .with({ playState: PlayState.Paused }, () => {
         return (
           // Paused and stored timeline progress
           timelineState.progress ||
@@ -184,7 +185,7 @@ function animateCanvasEntities({
         setTimelineState({
           ...timelineState,
           progress: 1,
-          playState: "paused",
+          playState: PlayState.Paused,
         });
       } else {
         requestAnimationFrameRef.current = requestAnimationFrame(draw);

@@ -1,6 +1,9 @@
 type Duration = number;
 
-export type PlayState = "playing" | "paused";
+export enum PlayState {
+  Playing = "playing",
+  Paused = "paused",
+}
 
 export const MIN_DURATION = 1;
 
@@ -13,7 +16,7 @@ export interface Timeline {
 
 export const init = function (duration = 1): Timeline {
   return {
-    playState: "paused",
+    playState: PlayState.Paused,
     duration,
     progress: 0,
     startTime: 0,
@@ -23,7 +26,7 @@ export const init = function (duration = 1): Timeline {
 export const play = function (timeline: Timeline): Timeline {
   return {
     ...timeline,
-    playState: "playing",
+    playState: PlayState.Playing,
     startTime: Date.now(),
     progress: undefined,
   };
@@ -32,7 +35,7 @@ export const play = function (timeline: Timeline): Timeline {
 export const pause = function (timeline: Timeline): Timeline {
   return {
     ...timeline,
-    playState: "paused",
+    playState: PlayState.Paused,
     progress: undefined,
   };
 };
@@ -42,11 +45,11 @@ export const isFinished = function ({ progress }: Timeline): boolean {
 };
 
 export const isPlaying = function (timeline: Timeline): boolean {
-  return timeline.playState === "playing";
+  return timeline.playState === PlayState.Playing;
 };
 
 export const isPaused = function ({ playState }: Timeline): boolean {
-  return playState === "paused";
+  return playState === PlayState.Paused;
 };
 
 export const togglePlayPause = function (timeline: Timeline): Timeline {
@@ -59,7 +62,7 @@ export const updateDuration = function (
 ): Timeline {
   return {
     ...timeline,
-    playState: "paused",
+    playState: PlayState.Paused,
     duration: Math.max(MIN_DURATION, duration),
   };
 };
