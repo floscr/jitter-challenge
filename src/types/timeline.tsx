@@ -34,7 +34,7 @@ export const play = function (timeline: Timeline): Timeline {
   };
 };
 
-const replay = function (timeline: Timeline): Timeline {
+export const replay = function (timeline: Timeline): Timeline {
   return {
     ...play(timeline),
     progress: 0,
