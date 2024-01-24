@@ -167,8 +167,6 @@ function animateCanvasEntities({
 
     updateCanvas(canvasElement, entitiesAtProgress, dimensions);
 
-    console.log(timeline.isPaused(timelineState));
-
     if (
       timeline.isPaused(timelineState) &&
       timelineState.progress === undefined

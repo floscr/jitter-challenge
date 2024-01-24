@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import Canvas from "./Canvas";
 import * as types from "./types";
 import * as timeline from "../../types/timeline.tsx";
@@ -10,6 +10,13 @@ const App: React.FC = () => {
   );
   const [timelineState, setTimelineState] = useState<timeline.Timeline>(
     timeline.init(),
+  );
+
+  const onAddRectangle = useCallback(
+    function () {
+      setTimelineState(timeline.pause(timelineState));
+    },
+    [timelineState],
   );
 
   return (
@@ -26,6 +33,7 @@ const App: React.FC = () => {
           <ControlPanel
             timelineState={timelineState}
             setTimelineState={setTimelineState}
+            onAddRectangle={onAddRectangle}
           />
         </aside>
       </div>

@@ -7,11 +7,13 @@ import * as timeline from "@/types/timeline";
 interface ControlPanelProps {
   setTimelineState: React.Dispatch<timeline.Timeline>;
   timelineState: timeline.Timeline;
+  onAddRectangle: () => void;
 }
 
 const ControlPanel: React.FC<ControlPanelProps> = ({
   setTimelineState,
   timelineState,
+  onAddRectangle,
 }) => {
   const onDurationChange = useCallback(
     function (e: React.ChangeEvent<HTMLInputElement>): void {
@@ -33,7 +35,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   return (
     <div className="flex flex-col grow space-y-6">
       <div className="flex flex-col space-y-6">
-        <Button>Add Rectangle</Button>
+        <Button onClick={(_e) => onAddRectangle()}>Add Rectangle</Button>
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="picture">Duration</Label>
           <Input
