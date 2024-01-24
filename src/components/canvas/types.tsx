@@ -68,6 +68,25 @@ export const addRandomRectangleEntity = function (canvas: Canvas) {
   };
 };
 
+export const randomizeRectangleColor = function (
+  entityId: string,
+  canvas: Canvas,
+) {
+  return {
+    ...canvas,
+    entities: canvas.entities.map(function (entity: Entity) {
+      if (entity.id === entityId) {
+        return {
+          ...entity,
+          color: randomHexColor(),
+        };
+      }
+
+      return entity;
+    }),
+  };
+};
+
 export const defaultCanvas = {
   entities: [],
 };

@@ -17,6 +17,10 @@ const App: React.FC = () => {
     setCanvasData(types.addRandomRectangleEntity);
   }, []);
 
+  const onRandomizeRectangleColor = useCallback(function (id: string): void {
+    setCanvasData((state) => types.randomizeRectangleColor(id, state));
+  }, []);
+
   return (
     <div className="fixed top-0 right-0 bottom-0 left-0 flex">
       <div className="grow lg:border-r h-full">
@@ -25,6 +29,7 @@ const App: React.FC = () => {
           setCanvasData={setCanvasData}
           timelineState={timelineState}
           setTimelineState={setTimelineState}
+          onRandomizeRectangleColor={onRandomizeRectangleColor}
         />
       </div>
       <aside className="p-6 flex" style={{ minWidth: "300px" }}>

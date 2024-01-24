@@ -11,6 +11,7 @@ interface CanvasProps {
   timelineState: timeline.Timeline;
   setTimelineState: React.Dispatch<timeline.Timeline>;
   setCanvasData: React.Dispatch<React.SetStateAction<types.Canvas>>;
+  onRandomizeRectangleColor: (id: string) => void;
 }
 
 type Dimensions = {
@@ -209,6 +210,7 @@ const Canvas: React.FC<CanvasProps> = ({
   setCanvasData,
   timelineState,
   setTimelineState,
+  onRandomizeRectangleColor,
 }) => {
   const { ref } = useCanvas(setCanvasData);
   const { dimensions } = canvasData;
@@ -263,8 +265,7 @@ const Canvas: React.FC<CanvasProps> = ({
       }, canvasData.entities);
 
       if (clickedEntity) {
-        // Handle the click on the rectangle (e.g., perform an action)
-        console.log("Clicked on rectangle:", clickedEntity);
+        onRandomizeRectangleColor(clickedEntity.id);
       }
     },
     [canvasData],
