@@ -126,10 +126,9 @@ function animateCanvasEntities({
   timelineState,
   progressRef,
   setTimelineState,
+  requestAnimationFrameRef,
 }): void {
-  console.log(timelineState);
   function draw() {
-    console.log("inside", timelineState);
     const currentTime = Date.now();
     const elapsed = currentTime - timelineState.startTime;
 
@@ -159,26 +158,16 @@ function animateCanvasEntities({
 
     updateCanvas(canvasElement, entitiesAtProgress, dimensions);
 
-    /* console.log(timelineState); */
-
     if (
       timeline.isPaused(timelineState) &&
       timelineState.progress === undefined
     ) {
-      cancelAnimationFrame(draw);
+      cancelAnimationFrame(requestAnimationFrameRef.current);
       progressRef.current = undefined;
-      console.log("OUTSIDE PAUSE", {
-        ...timelineState,
-        progress: progress,
-      });
       setTimelineState({
         ...timelineState,
         progress: progress,
       });
-      return;
-    }
-
-    if (timeline.isPaused(timelineState)) {
       return;
     }
 
@@ -191,14 +180,13 @@ function animateCanvasEntities({
           progress: 1,
           playState: "paused",
         });
-        cancelAnimationFrame(draw);
       } else {
-        requestAnimationFrame(draw);
+        requestAnimationFrameRef.current = requestAnimationFrame(draw);
       }
     }
   }
 
-  draw();
+  requestAnimationFrameRef.current = requestAnimationFrame(draw);
 }
 
 const Canvas: React.FC<CanvasProps> = ({
@@ -208,8 +196,7 @@ const Canvas: React.FC<CanvasProps> = ({
 }) => {
   const { ref, dimensions } = useCanvas();
   const progressRef = useRef();
-
-  console.log(timelineState);
+  const requestAnimationFrameRef = useRef();
 
   useEffect(() => {
     const canvasElement = ref.current;
@@ -221,6 +208,7 @@ const Canvas: React.FC<CanvasProps> = ({
         timelineState,
         progressRef,
         setTimelineState,
+        requestAnimationFrameRef,
       });
     }
   }, [ref, dimensions, canvasData, timelineState, setTimelineState]);
