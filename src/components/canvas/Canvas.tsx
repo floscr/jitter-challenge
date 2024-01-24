@@ -67,8 +67,8 @@ const updateCanvas = (
     entities.map((entity) => {
       const cX = centerX - entity.width / ratio / 2;
       const cY = centerY - entity.height / ratio / 2;
-      const x = cX + entity.x / ratio / 2;
-      const y = cY + entity.y / ratio / 2;
+      const x = cX + entity.x / ratio;
+      const y = cY + entity.y / ratio;
 
       ctx.save();
       ctx.translate(
