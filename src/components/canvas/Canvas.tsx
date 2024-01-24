@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import * as types from "./types";
 import { cssVarHsla } from "../../lib/css.ts";
+import { match } from "ts-pattern";
 import * as timeline from "@/types/timeline.tsx";
 
 interface CanvasProps {
@@ -118,15 +119,111 @@ const useCanvas = function () {
   return { ref, dimensions };
 };
 
-const Canvas: React.FC<CanvasProps> = ({ canvasData, timelineState }) => {
+function animateCanvasEntities({
+  canvasElement,
+  dimensions,
+  canvasData,
+  timelineState,
+  progressRef,
+  setTimelineState,
+}): void {
+  console.log(timelineState);
+  function draw() {
+    console.log("inside", timelineState);
+    const currentTime = Date.now();
+    const elapsed = currentTime - timelineState.startTime;
+
+    const progress = match(timelineState)
+      .with({ playState: "playing" }, ({ duration }) => {
+        const playingProgress = Math.min(elapsed / duration / 1000, 1);
+        progressRef.current = playingProgress;
+        return playingProgress;
+      })
+      .with({ playState: "paused" }, () => {
+        return (
+          // Paused and stored timeline progress
+          timelineState.progress ||
+          // Progress before storing it in state using the mutable ref
+          progressRef.current ||
+          // Default state
+          0
+        );
+      })
+      .exhaustive();
+
+    // Possibly mutate entities if the Object copy is too slow for an animation
+    const entitiesAtProgress = canvasData.entities.map((entity) => ({
+      ...entity,
+      rotation: entity.rotation + 180 * progress,
+    }));
+
+    updateCanvas(canvasElement, entitiesAtProgress, dimensions);
+
+    /* console.log(timelineState); */
+
+    if (
+      timeline.isPaused(timelineState) &&
+      timelineState.progress === undefined
+    ) {
+      cancelAnimationFrame(draw);
+      progressRef.current = undefined;
+      console.log("OUTSIDE PAUSE", {
+        ...timelineState,
+        progress: progress,
+      });
+      setTimelineState({
+        ...timelineState,
+        progress: progress,
+      });
+      return;
+    }
+
+    if (timeline.isPaused(timelineState)) {
+      return;
+    }
+
+    if (timeline.isPlaying(timelineState)) {
+      if (progress === 1) {
+        // Timeline finished playing, set it to paused a
+        progressRef.current = undefined;
+        setTimelineState({
+          ...timelineState,
+          progress: 1,
+          playState: "paused",
+        });
+        cancelAnimationFrame(draw);
+      } else {
+        requestAnimationFrame(draw);
+      }
+    }
+  }
+
+  draw();
+}
+
+const Canvas: React.FC<CanvasProps> = ({
+  canvasData,
+  timelineState,
+  setTimelineState,
+}) => {
   const { ref, dimensions } = useCanvas();
-  const timelineRef = useRef<timeline.Timeline | null>(null);
+  const progressRef = useRef();
+
+  console.log(timelineState);
 
   useEffect(() => {
-    if (ref.current && dimensions) {
-      updateCanvas(ref.current, canvasData.entities, dimensions);
+    const canvasElement = ref.current;
+    if (canvasElement && dimensions) {
+      animateCanvasEntities({
+        canvasElement,
+        dimensions,
+        canvasData,
+        timelineState,
+        progressRef,
+        setTimelineState,
+      });
     }
-  }, [ref, dimensions, canvasData]);
+  }, [ref, dimensions, canvasData, timelineState, setTimelineState]);
 
   return <canvas ref={ref} id="canvas" className="w-full h-full"></canvas>;
 };

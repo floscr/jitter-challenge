@@ -48,7 +48,6 @@ const App: React.FC = () => {
             timelineState={timelineState}
             setTimelineState={setTimelineState}
             onAddRectangle={addRectangle}
-            onPlayAnimation={playAnimation}
             onDownloadProject={downloadProject}
           />
         </aside>

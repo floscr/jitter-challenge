@@ -7,7 +7,6 @@ import * as timeline from "@/types/timeline";
 interface ControlPanelProps {
   onAddRectangle: () => void;
   onDurationChange: (duration: number) => void;
-  onPlayAnimation: () => void;
   onDownloadProject: () => void;
 }
 
