@@ -5,19 +5,16 @@ import { Label } from "@/components/ui/label";
 import * as timeline from "@/types/timeline";
 
 interface ControlPanelProps {
-  onAddRectangle: () => void;
-  onDurationChange: (duration: number) => void;
-  onDownloadProject: () => void;
+  setTimelineState: React.Dispatch<timeline.Timeline>;
+  timelineState: timeline.Timeline;
 }
 
 const ControlPanel: React.FC<ControlPanelProps> = ({
-  timelineState,
   setTimelineState,
-  onAddRectangle,
-  onDownloadProject,
+  timelineState,
 }) => {
   const onDurationChange = useCallback(
-    function (e: ChangeEvent<HTMLInputElement>): void {
+    function (e: React.ChangeEvent<HTMLInputElement>): void {
       const duration = Number(e.target.value);
       const nextState = timeline.updateDuration(duration, timelineState);
       setTimelineState(nextState);
@@ -36,7 +33,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   return (
     <div className="flex flex-col grow space-y-6">
       <div className="flex flex-col space-y-6">
-        <Button onClick={onAddRectangle}>Add Rectangle</Button>
+        <Button>Add Rectangle</Button>
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="picture">Duration</Label>
           <Input
@@ -53,10 +50,8 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         )}
       </div>
       <div className="flex flex-col space-y-3">
-        <Button onClick={onDownloadProject}>Import</Button>
-        <Button onClick={onDownloadProject} variant="secondary">
-          Export
-        </Button>
+        <Button>Import</Button>
+        <Button>Export</Button>
       </div>
     </div>
   );

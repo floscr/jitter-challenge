@@ -1,5 +1,3 @@
-import { match, P } from "ts-pattern";
-
 type Duration = number;
 
 export type PlayState = "playing" | "paused";
@@ -10,7 +8,7 @@ export interface Timeline {
   playState: PlayState;
   duration: Duration;
   progress?: number;
-  startTime?: Date;
+  startTime: number;
 }
 
 export const init = function (duration = 1): Timeline {
@@ -18,6 +16,7 @@ export const init = function (duration = 1): Timeline {
     playState: "paused",
     duration,
     progress: 0,
+    startTime: 0,
   };
 };
 
@@ -35,7 +34,6 @@ export const pause = function (timeline: Timeline): Timeline {
     ...timeline,
     playState: "paused",
     progress: undefined,
-    startTime: undefined,
   };
 };
 
@@ -50,11 +48,6 @@ export const isPlaying = function (timeline: Timeline): boolean {
 export const isPaused = function ({ playState }: Timeline): boolean {
   return playState === "paused";
 };
-
-/* const progress = function (timeline: Timeline) {
- *   return match(timeline.playState)
- *   .with()
- * }; */
 
 export const togglePlayPause = function (timeline: Timeline): Timeline {
   return isPlaying(timeline) ? pause(timeline) : play(timeline);

@@ -19,7 +19,7 @@ export const defaultCanvas = {
   entities: [],
 };
 
-export const exampleCanvas = {
+export const exampleCanvas: Canvas = {
   entities: [
     {
       type: "rectangle",

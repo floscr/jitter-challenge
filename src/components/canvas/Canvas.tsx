@@ -6,32 +6,40 @@ import * as timeline from "@/types/timeline.tsx";
 
 interface CanvasProps {
   canvasData: types.Canvas;
-  onClick: (index: number) => void;
+  timelineState: timeline.Timeline;
+  setTimelineState: React.Dispatch<timeline.Timeline>;
 }
+
+type Dimensions = {
+  width: number;
+  height: number;
+};
 
 const drawAxisLines = (
   ctx: CanvasRenderingContext2D,
   canvas: HTMLCanvasElement,
   ratio: number,
 ) => {
+  const strokeStyle = cssVarHsla("--border");
+
   // Draw X-axis
   ctx.beginPath();
   ctx.moveTo(0, canvas.height / 2 / ratio);
   ctx.lineTo(canvas.width / ratio, canvas.height / 2 / ratio);
-  ctx.strokeStyle = cssVarHsla("--border");
+  if (strokeStyle) ctx.strokeStyle = strokeStyle;
   ctx.stroke();
 
   // Draw Y-axis
   ctx.beginPath();
   ctx.moveTo(canvas.width / 2 / ratio, 0);
   ctx.lineTo(canvas.width / 2 / ratio, canvas.height / ratio);
-  ctx.strokeStyle = cssVarHsla("--border");
+  if (strokeStyle) ctx.strokeStyle = strokeStyle;
   ctx.stroke();
 };
 
 const updateCanvas = (
   canvas: HTMLCanvasElement,
-  entities: Entity[],
+  entities: types.Entity[],
   dimensions: Dimensions,
 ) => {
   const ctx = canvas.getContext("2d");
@@ -48,7 +56,7 @@ const updateCanvas = (
     const centerY = canvas.height / 2 / ratio;
 
     // Clear the initial rectangle
-    ctx.fillStyle = cssVarHsla("--muted");
+    ctx.fillStyle = cssVarHsla("--muted") || "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     drawAxisLines(ctx, canvas, ratio);
@@ -79,14 +87,9 @@ const updateCanvas = (
   }
 };
 
-type Dimensions = {
-  width: number;
-  height: number;
-};
-
 const useCanvas = function () {
   const ref = useRef<HTMLCanvasElement | null>(null);
-  const [dimensions, setDimensions] = useState<Dimensions>(null);
+  const [dimensions, setDimensions] = useState<Dimensions | null>(null);
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -111,21 +114,32 @@ const useCanvas = function () {
 };
 
 function animateCanvasEntities({
+  canvasData,
   canvasElement,
   dimensions,
-  canvasData,
-  timelineState,
   progressRef,
-  setTimelineState,
   requestAnimationFrameRef,
+  setTimelineState,
+  timelineState,
+}: {
+  canvasData: types.Canvas;
+  canvasElement: HTMLCanvasElement;
+  dimensions: Dimensions;
+  progressRef: React.MutableRefObject<number | undefined>;
+  requestAnimationFrameRef: React.MutableRefObject<number | undefined>;
+  setTimelineState: React.Dispatch<timeline.Timeline>;
+  timelineState: timeline.Timeline;
 }): void {
   function draw() {
     const currentTime = Date.now();
     const elapsed = currentTime - timelineState.startTime;
 
     const progress = match(timelineState)
-      .with({ playState: "playing" }, ({ duration }) => {
-        const playingProgress = Math.min(elapsed / duration / 1000, 1);
+      .with({ playState: "playing" }, () => {
+        const playingProgress = Math.min(
+          elapsed / timelineState.duration / 1000,
+          1,
+        );
         progressRef.current = playingProgress;
         return playingProgress;
       })
@@ -139,7 +153,7 @@ function animateCanvasEntities({
           0
         );
       })
-      .exhaustive();
+      .otherwise(() => 0);
 
     // Possibly mutate entities if the Object copy is too slow for an animation
     const entitiesAtProgress = canvasData.entities.map((entity) => ({
@@ -153,7 +167,8 @@ function animateCanvasEntities({
       timeline.isPaused(timelineState) &&
       timelineState.progress === undefined
     ) {
-      cancelAnimationFrame(requestAnimationFrameRef.current);
+      const animationFrameID: number = requestAnimationFrameRef.current!;
+      cancelAnimationFrame(animationFrameID);
       progressRef.current = undefined;
       setTimelineState({
         ...timelineState,
@@ -163,7 +178,7 @@ function animateCanvasEntities({
     }
 
     if (timeline.isPlaying(timelineState)) {
-      if (progress === 1) {
+      if (timeline.isFinished(timelineState)) {
         // Timeline finished playing, set it to paused a
         progressRef.current = undefined;
         setTimelineState({

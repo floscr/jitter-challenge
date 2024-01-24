@@ -1,4 +1,3 @@
-import React from "react";
 import CanvasRoot from "./components/canvas/Root";
 
 function App() {
