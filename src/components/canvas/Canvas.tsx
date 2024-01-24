@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import * as types from "./types";
 import { cssVarHsla } from "../../lib/css.ts";
 import { match } from "ts-pattern";
 import { PlayState } from "@/types/timeline.tsx";
 import * as timeline from "@/types/timeline.tsx";
+import { findLast } from "ramda";
 
 interface CanvasProps {
   canvasData: types.Canvas;
@@ -237,7 +238,48 @@ const Canvas: React.FC<CanvasProps> = ({
     }
   }, [ref, dimensions, canvasData, timelineState, setTimelineState]);
 
-  return <canvas ref={ref} id="canvas" className="w-full h-full"></canvas>;
+  const onCanvasClick = useCallback(
+    function (e: React.MouseEvent<HTMLCanvasElement>) {
+      e.stopPropagation();
+
+      const canvasElement = ref.current!;
+
+      if (!canvasElement) return;
+
+      const rect = canvasElement.getBoundingClientRect();
+      console.log("rect", rect, e.clientX, e.clientY);
+      const x = e.clientX - rect.width / 2;
+      const y = e.clientY - rect.height / 2;
+
+      const clickedEntity = findLast((entity: types.Entity) => {
+        console.log({
+          x: [x, entity.x],
+          y: [y, entity.y],
+        });
+        return (
+          x >= entity.x - entity.width / 2 &&
+          x <= entity.x + entity.width / 2 &&
+          y >= entity.y - entity.height / 2 &&
+          y <= entity.y + entity.height / 2
+        );
+      }, canvasData.entities);
+
+      if (clickedEntity) {
+        // Handle the click on the rectangle (e.g., perform an action)
+        console.log("Clicked on rectangle:", clickedEntity);
+      }
+    },
+    [canvasData],
+  );
+
+  return (
+    <canvas
+      ref={ref}
+      id="canvas"
+      className="w-full h-full"
+      onClick={onCanvasClick}
+    ></canvas>
+  );
 };
 
 export default Canvas;
