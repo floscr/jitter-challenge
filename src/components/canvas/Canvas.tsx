@@ -247,20 +247,18 @@ const Canvas: React.FC<CanvasProps> = ({
       if (!canvasElement) return;
 
       const rect = canvasElement.getBoundingClientRect();
-      console.log("rect", rect, e.clientX, e.clientY);
-      const x = e.clientX - rect.width / 2;
-      const y = e.clientY - rect.height / 2;
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const clickX = e.clientX - centerX;
+      const clickY = e.clientY - centerY;
 
       const clickedEntity = findLast((entity: types.Entity) => {
-        console.log({
-          x: [x, entity.x],
-          y: [y, entity.y],
-        });
         return (
-          x >= entity.x - entity.width / 2 &&
-          x <= entity.x + entity.width / 2 &&
-          y >= entity.y - entity.height / 2 &&
-          y <= entity.y + entity.height / 2
+          clickX >= (entity.x - entity.width / 2) / devicePixelRatio &&
+          clickX <= (entity.x + entity.width / 2) / devicePixelRatio &&
+          clickY >= (entity.y - entity.height / 2) / devicePixelRatio &&
+          clickY <= (entity.y + entity.height / 2) / devicePixelRatio
         );
       }, canvasData.entities);
 
