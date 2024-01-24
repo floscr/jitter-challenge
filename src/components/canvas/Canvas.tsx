@@ -167,6 +167,8 @@ function animateCanvasEntities({
 
     updateCanvas(canvasElement, entitiesAtProgress, dimensions);
 
+    console.log(timeline.isPaused(timelineState));
+
     if (
       timeline.isPaused(timelineState) &&
       timelineState.progress === undefined
@@ -206,6 +208,14 @@ const Canvas: React.FC<CanvasProps> = ({
 
   useEffect(() => {
     const canvasElement = ref.current;
+
+    if (
+      !timeline.isPlaying(timelineState) &&
+      requestAnimationFrameRef.current
+    ) {
+      cancelAnimationFrame(requestAnimationFrameRef.current);
+    }
+
     if (canvasElement && dimensions) {
       animateCanvasEntities({
         canvasElement,

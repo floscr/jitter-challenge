@@ -78,7 +78,8 @@ export const updateDuration = function (
 ): Timeline {
   return {
     ...timeline,
-    playState: PlayState.Paused,
+    playState: PlayState.Stopped,
+    progress: 0,
     duration: Math.max(MIN_DURATION, duration),
   };
 };

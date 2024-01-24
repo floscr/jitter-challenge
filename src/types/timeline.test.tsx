@@ -27,7 +27,8 @@ describe("updateDuration", () => {
     const tl = timeline.init();
     const expected = timeline.updateDuration(10, tl);
 
-    expect(expected.playState).toBe(PlayState.Paused);
+    expect(expected.playState).toBe(PlayState.Stopped);
+    expect(expected.progress).toBe(0);
     expect(expected.duration).toBe(10);
   });
 });
