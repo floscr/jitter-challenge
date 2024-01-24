@@ -37,16 +37,7 @@ const updateCanvas = (
   const ctx = canvas.getContext("2d");
 
   if (ctx) {
-    // Adjust the canvas size for HDPI screens
-    const devicePixelRatio = window.devicePixelRatio || 1;
-    const backingStoreRatio =
-      ctx.webkitBackingStorePixelRatio ||
-      ctx.mozBackingStorePixelRatio ||
-      ctx.msBackingStorePixelRatio ||
-      ctx.oBackingStorePixelRatio ||
-      ctx.backingStorePixelRatio ||
-      1;
-    const ratio = devicePixelRatio / backingStoreRatio;
+    const ratio = window.devicePixelRatio || 1;
 
     canvas.width = dimensions.width * ratio;
     canvas.height = dimensions.height * ratio;
