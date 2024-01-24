@@ -2,18 +2,49 @@ import React, { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import * as types from "./types";
 import * as timeline from "@/types/timeline";
+import md5 from "md5";
 
 interface ControlPanelProps {
+  canvasData: types.Canvas;
+  onAddRectangle: () => void;
   setTimelineState: React.Dispatch<timeline.Timeline>;
   timelineState: timeline.Timeline;
-  onAddRectangle: () => void;
 }
 
+const downloadJson = (filename: string, jsonString: string) => {
+  const blob = new Blob([jsonString], {
+    type: "application/json",
+  });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+const onDownloadCanvasJsonClick = (canvas: types.Canvas): void => {
+  const exportableCanvas = {
+    entities: canvas.entities,
+  };
+  const json = JSON.stringify(exportableCanvas, null, 2);
+  const hash = md5(json);
+
+  const filename = `jitter_${hash}.json`;
+  downloadJson(filename, json);
+};
+
 const ControlPanel: React.FC<ControlPanelProps> = ({
+  canvasData,
+  onAddRectangle,
   setTimelineState,
   timelineState,
-  onAddRectangle,
 }) => {
   const onDurationChange = useCallback(
     function (e: React.ChangeEvent<HTMLInputElement>): void {
@@ -30,6 +61,13 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       setTimelineState(nextState);
     },
     [timelineState, setTimelineState],
+  );
+
+  const onDowloadClick = useCallback(
+    function (): void {
+      onDownloadCanvasJsonClick(canvasData);
+    },
+    [canvasData],
   );
 
   return (
@@ -53,7 +91,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       </div>
       <div className="flex flex-col space-y-3">
         <Button>Import</Button>
-        <Button>Export</Button>
+        <Button onClick={onDowloadClick}>Export</Button>
       </div>
     </div>
   );

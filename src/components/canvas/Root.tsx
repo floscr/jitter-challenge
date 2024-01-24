@@ -34,6 +34,7 @@ const App: React.FC = () => {
       </div>
       <aside className="p-6 flex" style={{ minWidth: "300px" }}>
         <ControlPanel
+          canvasData={canvasData}
           timelineState={timelineState}
           setTimelineState={setTimelineState}
           onAddRectangle={onAddRectangle}
