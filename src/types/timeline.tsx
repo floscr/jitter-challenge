@@ -1,8 +1,11 @@
+import { match } from "ts-pattern";
+
 type Duration = number;
 
 export enum PlayState {
   Playing = "playing",
   Paused = "paused",
+  Stopped = "stopped",
 }
 
 export const MIN_DURATION = 1;
@@ -16,7 +19,7 @@ export interface Timeline {
 
 export const init = function (duration = 1): Timeline {
   return {
-    playState: PlayState.Paused,
+    playState: PlayState.Stopped,
     duration,
     progress: 0,
     startTime: 0,
@@ -24,11 +27,17 @@ export const init = function (duration = 1): Timeline {
 };
 
 export const play = function (timeline: Timeline): Timeline {
-  console.log(timeline);
   return {
     ...timeline,
     playState: PlayState.Playing,
     startTime: Date.now(),
+  };
+};
+
+const replay = function (timeline: Timeline): Timeline {
+  return {
+    ...play(timeline),
+    progress: 0,
   };
 };
 
@@ -40,8 +49,11 @@ export const pause = function (timeline: Timeline): Timeline {
   };
 };
 
-export const isFinished = function ({ progress }: Timeline): boolean {
-  return progress === 1;
+export const stop = function (timeline: Timeline) {
+  return {
+    ...timeline,
+    playState: PlayState.Stopped,
+  };
 };
 
 export const isPlaying = function (timeline: Timeline): boolean {
@@ -53,7 +65,11 @@ export const isPaused = function ({ playState }: Timeline): boolean {
 };
 
 export const togglePlayPause = function (timeline: Timeline): Timeline {
-  return isPlaying(timeline) ? pause(timeline) : play(timeline);
+  return match(timeline)
+    .with({ playState: PlayState.Playing }, pause)
+    .with({ playState: PlayState.Paused }, play)
+    .with({ playState: PlayState.Stopped }, replay)
+    .otherwise((tl) => tl);
 };
 
 export const updateDuration = function (

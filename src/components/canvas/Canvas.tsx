@@ -181,14 +181,10 @@ function animateCanvasEntities({
     }
 
     if (timeline.isPlaying(timelineState)) {
-      if (timeline.isFinished(timelineState)) {
+      if (progress === 1) {
         // Timeline finished playing, set it to paused a
         progressRef.current = undefined;
-        setTimelineState({
-          ...timelineState,
-          progress: 1,
-          playState: PlayState.Paused,
-        });
+        setTimelineState(timeline.stop(timelineState));
       } else {
         requestAnimationFrameRef.current = requestAnimationFrame(draw);
       }

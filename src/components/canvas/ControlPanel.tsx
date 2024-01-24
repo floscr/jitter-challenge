@@ -43,10 +43,10 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
             onChange={onDurationChange}
           />
         </div>
-        {timeline.isPaused(timelineState) ? (
-          <Button onClick={onPlayPauseClick}>Play</Button>
-        ) : (
+        {timeline.isPlaying(timelineState) ? (
           <Button onClick={onPlayPauseClick}>Pause</Button>
+        ) : (
+          <Button onClick={onPlayPauseClick}>Play</Button>
         )}
       </div>
       <div className="flex flex-col space-y-3">
