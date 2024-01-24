@@ -13,6 +13,10 @@ export type Entity = Rectangle;
 
 export interface Canvas {
   entities: Array<Entity>;
+  dimensions?: {
+    width: number;
+    height: number;
+  };
 }
 
 export const defaultCanvas = {

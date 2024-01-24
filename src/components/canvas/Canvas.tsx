@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import * as types from "./types";
 import { cssVarHsla } from "../../lib/css.ts";
 import { match } from "ts-pattern";
@@ -9,6 +9,7 @@ interface CanvasProps {
   canvasData: types.Canvas;
   timelineState: timeline.Timeline;
   setTimelineState: React.Dispatch<timeline.Timeline>;
+  setCanvasData: React.Dispatch<React.SetStateAction<types.Canvas>>;
 }
 
 type Dimensions = {
@@ -88,9 +89,10 @@ const updateCanvas = (
   }
 };
 
-const useCanvas = function () {
+const useCanvas = function (
+  setCanvasData: React.Dispatch<React.SetStateAction<types.Canvas>>,
+) {
   const ref = useRef<HTMLCanvasElement | null>(null);
-  const [dimensions, setDimensions] = useState<Dimensions | null>(null);
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -98,7 +100,13 @@ const useCanvas = function () {
 
       if (canvasRef) {
         const { offsetHeight: height, offsetWidth: width } = canvasRef;
-        setDimensions({ width: width, height: height });
+        setCanvasData((value: types.Canvas) => ({
+          ...value,
+          dimensions: {
+            width,
+            height,
+          },
+        }));
       }
     };
 
@@ -109,9 +117,9 @@ const useCanvas = function () {
     return () => {
       window.removeEventListener("resize", updateDimensions);
     };
-  }, []);
+  }, [setCanvasData]);
 
-  return { ref, dimensions };
+  return { ref };
 };
 
 function animateCanvasEntities({
@@ -197,10 +205,12 @@ function animateCanvasEntities({
 
 const Canvas: React.FC<CanvasProps> = ({
   canvasData,
+  setCanvasData,
   timelineState,
   setTimelineState,
 }) => {
-  const { ref, dimensions } = useCanvas();
+  const { ref } = useCanvas(setCanvasData);
+  const { dimensions } = canvasData;
   const progressRef = useRef();
   const requestAnimationFrameRef = useRef();
 

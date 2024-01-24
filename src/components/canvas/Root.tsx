@@ -5,7 +5,7 @@ import * as timeline from "../../types/timeline.tsx";
 import ControlPanel from "./ControlPanel";
 
 const App: React.FC = () => {
-  const [canvasData, _setCanvasData] = useState<types.Canvas>(
+  const [canvasData, setCanvasData] = useState<types.Canvas>(
     types.exampleCanvas,
   );
   const [timelineState, setTimelineState] = useState<timeline.Timeline>(
@@ -25,6 +25,7 @@ const App: React.FC = () => {
         <div className="grow lg:border-r h-full">
           <Canvas
             canvasData={canvasData}
+            setCanvasData={setCanvasData}
             timelineState={timelineState}
             setTimelineState={setTimelineState}
           />
