@@ -24,11 +24,11 @@ export const init = function (duration = 1): Timeline {
 };
 
 export const play = function (timeline: Timeline): Timeline {
+  console.log(timeline);
   return {
     ...timeline,
     playState: PlayState.Playing,
     startTime: Date.now(),
-    progress: undefined,
   };
 };
 

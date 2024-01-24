@@ -137,8 +137,10 @@ function animateCanvasEntities({
 
     const progress = match(timelineState)
       .with({ playState: PlayState.Playing }, () => {
+        const timelineProgress = timelineState.progress || 0;
+
         const playingProgress = Math.min(
-          elapsed / timelineState.duration / 1000,
+          timelineProgress + elapsed / timelineState.duration / 1000,
           1,
         );
         progressRef.current = playingProgress;
