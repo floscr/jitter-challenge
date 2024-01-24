@@ -18,24 +18,22 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="fixed top-0 right-0 bottom-0 left-0">
-      <div className="fixed top-0 right-0 bottom-0 left-0 flex">
-        <div className="grow lg:border-r h-full">
-          <Canvas
-            canvasData={canvasData}
-            setCanvasData={setCanvasData}
-            timelineState={timelineState}
-            setTimelineState={setTimelineState}
-          />
-        </div>
-        <aside className="p-6 flex" style={{ minWidth: "300px" }}>
-          <ControlPanel
-            timelineState={timelineState}
-            setTimelineState={setTimelineState}
-            onAddRectangle={onAddRectangle}
-          />
-        </aside>
+    <div className="fixed top-0 right-0 bottom-0 left-0 flex">
+      <div className="grow lg:border-r h-full">
+        <Canvas
+          canvasData={canvasData}
+          setCanvasData={setCanvasData}
+          timelineState={timelineState}
+          setTimelineState={setTimelineState}
+        />
       </div>
+      <aside className="p-6 flex" style={{ minWidth: "300px" }}>
+        <ControlPanel
+          timelineState={timelineState}
+          setTimelineState={setTimelineState}
+          onAddRectangle={onAddRectangle}
+        />
+      </aside>
     </div>
   );
 };
