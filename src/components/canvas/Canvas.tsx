@@ -263,6 +263,7 @@ const Canvas: React.FC<CanvasProps> = ({
     function (e: React.MouseEvent<HTMLCanvasElement>) {
       e.stopPropagation();
 
+      const { ratio } = canvasData.dimensions!;
       const canvasElement = ref.current!;
 
       if (!canvasElement) return;
@@ -275,12 +276,16 @@ const Canvas: React.FC<CanvasProps> = ({
       const clickY = e.clientY - centerY;
 
       const clickedEntity = findLast((entity: canvas.Entity) => {
-        return (
-          clickX >= (entity.x - entity.width / 2) / devicePixelRatio &&
-          clickX <= (entity.x + entity.width / 2) / devicePixelRatio &&
-          clickY >= (entity.y - entity.height / 2) / devicePixelRatio &&
-          clickY <= (entity.y + entity.height / 2) / devicePixelRatio
-        );
+        const halfWidth = entity.width / 2;
+        const halfHeight = entity.height / 2;
+
+        const isWithinBounds =
+          clickX >= (entity.x - halfWidth) / ratio &&
+          clickX <= (entity.x + halfWidth) / ratio &&
+          clickY >= (entity.y - halfHeight) / ratio &&
+          clickY <= (entity.y + halfHeight) / ratio;
+
+        return isWithinBounds;
       }, canvasData.entities);
 
       if (clickedEntity) {
