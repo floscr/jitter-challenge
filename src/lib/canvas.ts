@@ -99,12 +99,13 @@ const randomHexColor = () => {
 
 const randomRectangleEntity = function (canvas: Canvas): Entity {
   const dimensions = canvas.dimensions!;
+  const ratio = dimensions.ratio;
 
-  const width = randomRectangleSideLength();
-  const height = randomRectangleSideLength();
+  const width = randomRectangleSideLength() / ratio;
+  const height = randomRectangleSideLength() / ratio;
 
-  const canvasSideWidth = dimensions.width + width / 2;
-  const canvasSideHeight = dimensions.height + height / 2;
+  const canvasSideWidth = dimensions.width / 2 + width / ratio;
+  const canvasSideHeight = dimensions.height / 2 + height / ratio;
 
   const x = Math.random() * canvasSideWidth * randomSign();
   const y = Math.random() * canvasSideHeight * randomSign();
