@@ -39,10 +39,6 @@ const drawAxisLines = (
   ctx.stroke();
 };
 
-function easeInOutCubic(t) {
-  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-}
-
 const updateCanvas = (
   canvas: HTMLCanvasElement,
   entities: canvas.Entity[],
@@ -95,6 +91,10 @@ const updateCanvas = (
 // Hardcoded rotation angle for the animation, this would be replaced by custom keyframes in a real product
 const ROTATE_BY_DEFAULT = 360;
 
+function easeInOutCubic(t) {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
 function animateCanvasEntities({
   canvasData,
   canvasElement,
@@ -116,34 +116,28 @@ function animateCanvasEntities({
     const currentTime = performance.now();
     const elapsed = currentTime - timelineState.startTime;
 
-    const progress = match(timelineState)
+    const linearProgress = match(timelineState)
       .with({ playState: PlayState.Playing }, () => {
-        const timelineProgress = timelineState.progress || 0;
-
         const linearProgress = Math.min(
-          timelineProgress + elapsed / timelineState.duration / 1000,
+          (timelineState.progress || 0) +
+            elapsed / timelineState.duration / 1000,
           1,
         );
-        const playingProgress = easeInOutCubic(linearProgress);
-        progressRef.current = playingProgress;
-        return playingProgress;
+        progressRef.current = linearProgress;
+
+        return linearProgress;
       })
       .with({ playState: PlayState.Paused }, () => {
-        return (
-          // Paused and stored timeline progress
-          timelineState.progress ||
-          // Progress before storing it in state using the ref value
-          progressRef.current ||
-          // Default state
-          0
-        );
+        return timelineState.progress || progressRef.current || 0;
       })
       .otherwise(() => 0);
+
+    const easedProgress = easeInOutCubic(linearProgress);
 
     // Possibly mutate entities if the Object copy is too slow for an animation
     const entitiesAtProgress = canvasData.entities.map((entity) => ({
       ...entity,
-      rotation: entity.rotation + ROTATE_BY_DEFAULT * progress,
+      rotation: entity.rotation + ROTATE_BY_DEFAULT * easedProgress,
     }));
 
     updateCanvas(canvasElement, entitiesAtProgress, dimensions);
@@ -156,19 +150,19 @@ function animateCanvasEntities({
     ) {
       const animationFrameID: number = requestAnimationFrameRef.current!;
       cancelAnimationFrame(animationFrameID);
-      progressRef.current = undefined;
 
       setTimelineState({
         ...timelineState,
-        progress: progress,
+        progress: linearProgress,
       });
+      progressRef.current = undefined;
 
       return;
     }
 
     // Play animation until end has reached
     if (timeline.isPlaying(timelineState)) {
-      if (progress === 1) {
+      if (easedProgress === 1) {
         // Timeline finished playing
         progressRef.current = undefined;
         setTimelineState(timeline.stop(timelineState));
