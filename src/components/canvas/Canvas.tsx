@@ -272,18 +272,33 @@ const Canvas: React.FC<CanvasProps> = ({
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
 
-      const clickX = e.clientX - centerX;
-      const clickY = e.clientY - centerY;
+      const clickX = (e.clientX - centerX) * ratio;
+      const clickY = (e.clientY - centerY) * ratio;
 
       const clickedEntity = findLast((entity: canvas.Entity) => {
+        // Center of the entity
+        const entityCenterX = entity.x;
+        const entityCenterY = entity.y;
+
+        // Translate and rotate click coordinates back to align with the entity's unrotated position
+        const angleInRadians = (-entity.rotation * Math.PI) / 180;
+        const rotatedX =
+          Math.cos(angleInRadians) * (clickX - entityCenterX) -
+          Math.sin(angleInRadians) * (clickY - entityCenterY) +
+          entityCenterX;
+        const rotatedY =
+          Math.sin(angleInRadians) * (clickX - entityCenterX) +
+          Math.cos(angleInRadians) * (clickY - entityCenterY) +
+          entityCenterY;
+
+        // Check if the rotated point is inside the entity
         const halfWidth = entity.width / 2;
         const halfHeight = entity.height / 2;
-
         const isWithinBounds =
-          clickX >= (entity.x - halfWidth) / ratio &&
-          clickX <= (entity.x + halfWidth) / ratio &&
-          clickY >= (entity.y - halfHeight) / ratio &&
-          clickY <= (entity.y + halfHeight) / ratio;
+          rotatedX >= entityCenterX - halfWidth &&
+          rotatedX <= entityCenterX + halfWidth &&
+          rotatedY >= entityCenterY - halfHeight &&
+          rotatedY <= entityCenterY + halfHeight;
 
         return isWithinBounds;
       }, canvasData.entities);
