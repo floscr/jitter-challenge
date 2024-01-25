@@ -1,12 +1,13 @@
 import React, { useState, useCallback } from "react";
+
 import Canvas from "./Canvas";
-import * as types from "./types";
-import * as timeline from "../../types/timeline.tsx";
+import * as canvas from "@/lib/canvas";
+import * as timeline from "@/lib/timeline";
 import ControlPanel from "./ControlPanel";
 
 const App: React.FC = () => {
-  const [canvasData, setCanvasData] = useState<types.Canvas>(
-    types.exampleCanvas,
+  const [canvasData, setCanvasData] = useState<canvas.Canvas>(
+    canvas.exampleCanvas,
   );
   const [timelineState, setTimelineState] = useState<timeline.Timeline>(
     timeline.init(),
@@ -14,11 +15,11 @@ const App: React.FC = () => {
 
   const onAddRectangle = useCallback(function () {
     setTimelineState(timeline.pause);
-    setCanvasData(types.addRandomRectangleEntity);
+    setCanvasData(canvas.addRandomRectangleEntity);
   }, []);
 
   const onRandomizeRectangleColor = useCallback(function (id: string): void {
-    setCanvasData((state) => types.randomizeRectangleColor(id, state));
+    setCanvasData((state) => canvas.randomizeRectangleColor(id, state));
   }, []);
 
   return (

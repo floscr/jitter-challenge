@@ -1,16 +1,17 @@
 import React, { useEffect, useRef, useCallback } from "react";
-import * as types from "./types";
-import { cssVarHsla } from "../../lib/css.ts";
-import { match } from "ts-pattern";
-import { PlayState } from "@/types/timeline.tsx";
-import * as timeline from "@/types/timeline.tsx";
 import { findLast } from "ramda";
+import { match } from "ts-pattern";
+
+import * as canvas from "@/lib/canvas";
+import * as timeline from "@/lib/timeline";
+import { PlayState } from "@/lib/timeline";
+import { cssVarHsla } from "@/lib/css";
 
 interface CanvasProps {
-  canvasData: types.Canvas;
+  canvasData: canvas.Canvas;
   timelineState: timeline.Timeline;
   setTimelineState: React.Dispatch<timeline.Timeline>;
-  setCanvasData: React.Dispatch<React.SetStateAction<types.Canvas>>;
+  setCanvasData: React.Dispatch<React.SetStateAction<canvas.Canvas>>;
   onRandomizeRectangleColor: (id: string) => void;
 }
 
@@ -44,7 +45,7 @@ const drawAxisLines = (
 
 const updateCanvas = (
   canvas: HTMLCanvasElement,
-  entities: types.Entity[],
+  entities: canvas.Entity[],
   dimensions: Dimensions,
 ) => {
   const ctx = canvas.getContext("2d");
@@ -93,7 +94,7 @@ const updateCanvas = (
 };
 
 const useCanvas = function (
-  setCanvasData: React.Dispatch<React.SetStateAction<types.Canvas>>,
+  setCanvasData: React.Dispatch<React.SetStateAction<canvas.Canvas>>,
 ) {
   const ref = useRef<HTMLCanvasElement | null>(null);
 
@@ -104,7 +105,7 @@ const useCanvas = function (
       if (canvasRef) {
         const { offsetHeight: height, offsetWidth: width } = canvasRef;
         const ratio = window.devicePixelRatio || 1;
-        setCanvasData((value: types.Canvas) => ({
+        setCanvasData((value: canvas.Canvas) => ({
           ...value,
           dimensions: {
             ratio,
@@ -136,7 +137,7 @@ function animateCanvasEntities({
   setTimelineState,
   timelineState,
 }: {
-  canvasData: types.Canvas;
+  canvasData: canvas.Canvas;
   canvasElement: HTMLCanvasElement;
   dimensions: Dimensions;
   progressRef: React.MutableRefObject<number | undefined>;
@@ -258,7 +259,7 @@ const Canvas: React.FC<CanvasProps> = ({
       const clickX = e.clientX - centerX;
       const clickY = e.clientY - centerY;
 
-      const clickedEntity = findLast((entity: types.Entity) => {
+      const clickedEntity = findLast((entity: canvas.Entity) => {
         return (
           clickX >= (entity.x - entity.width / 2) / devicePixelRatio &&
           clickX <= (entity.x + entity.width / 2) / devicePixelRatio &&

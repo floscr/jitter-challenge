@@ -1,13 +1,14 @@
 import React, { useCallback } from "react";
+import md5 from "md5";
+
+import * as timeline from "@/lib/timeline";
+import * as canvas from "@/lib/canvas";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import * as types from "./types";
-import * as timeline from "@/types/timeline";
-import md5 from "md5";
 
 interface ControlPanelProps {
-  canvasData: types.Canvas;
+  canvasData: canvas.Canvas;
   onAddRectangle: () => void;
   setTimelineState: React.Dispatch<timeline.Timeline>;
   timelineState: timeline.Timeline;
@@ -29,7 +30,7 @@ const downloadJson = (filename: string, jsonString: string) => {
   URL.revokeObjectURL(url);
 };
 
-const onDownloadCanvasJsonClick = (canvas: types.Canvas): void => {
+const onDownloadCanvasJsonClick = (canvas: canvas.Canvas): void => {
   const exportableCanvas = {
     entities: canvas.entities,
   };
