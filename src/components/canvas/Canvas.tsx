@@ -89,7 +89,7 @@ const updateCanvas = (
 };
 
 // Hardcoded rotation angle for the animation, this would be replaced by custom keyframes in a real product
-const ROTATE_BY_DEFAULT = 180;
+const ROTATE_BY_DEFAULT = 360;
 
 function animateCanvasEntities({
   canvasData,
