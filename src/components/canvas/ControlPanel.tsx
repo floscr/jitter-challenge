@@ -1,6 +1,7 @@
 import React, { useCallback, useRef } from "react";
 import md5 from "md5";
 import { Ok, Err, Result } from "ts-results";
+import { match } from "ts-pattern";
 
 import * as timeline from "@/lib/timeline";
 import * as canvas from "@/lib/canvas";
@@ -66,7 +67,6 @@ const importCanvasJson = async (
       const data = await readFile(file);
       result = Ok(data);
     } catch (error) {
-      console.error(error);
       result = Err(error as Error);
     }
   } else {
@@ -108,6 +108,7 @@ const FileUploadButton = function ({
 interface ControlPanelProps {
   canvasData: canvas.Canvas;
   onAddRectangle: () => void;
+  setCanvasData: React.Dispatch<React.SetStateAction<canvas.Canvas>>;
   setTimelineState: React.Dispatch<timeline.Timeline>;
   timelineState: timeline.Timeline;
 }
@@ -115,6 +116,7 @@ interface ControlPanelProps {
 const ControlPanel: React.FC<ControlPanelProps> = ({
   canvasData,
   onAddRectangle,
+  setCanvasData,
   setTimelineState,
   timelineState,
 }) => {
@@ -142,12 +144,19 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     [canvasData],
   );
 
-  const onImportClick = useCallback(async function (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ): Promise<void> {
-    const result = await importCanvasJson(e);
-    console.log(result);
-  }, []);
+  const onImportClick = useCallback(
+    async function (e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
+      const result = await importCanvasJson(e);
+      match(result)
+        .with({ ok: true }, ({ val }) => {
+          const canvasData = val as canvas.Canvas;
+          setCanvasData((state) => ({ ...state, ...canvasData }));
+        })
+        .with({ ok: false }, ({ val }) => console.error(val))
+        .exhaustive();
+    },
+    [setCanvasData],
+  );
 
   return (
     <div className="flex flex-col grow space-y-6 justify-between">
