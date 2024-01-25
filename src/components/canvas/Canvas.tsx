@@ -276,11 +276,9 @@ const Canvas: React.FC<CanvasProps> = ({
       const clickY = (e.clientY - centerY) * ratio;
 
       const clickedEntity = findLast((entity: canvas.Entity) => {
-        // Center of the entity
         const entityCenterX = entity.x;
         const entityCenterY = entity.y;
 
-        // Translate and rotate click coordinates back to align with the entity's unrotated position
         const angleInRadians = (-entity.rotation * Math.PI) / 180;
         const rotatedX =
           Math.cos(angleInRadians) * (clickX - entityCenterX) -
@@ -291,7 +289,6 @@ const Canvas: React.FC<CanvasProps> = ({
           Math.cos(angleInRadians) * (clickY - entityCenterY) +
           entityCenterY;
 
-        // Check if the rotated point is inside the entity
         const halfWidth = entity.width / 2;
         const halfHeight = entity.height / 2;
         const isWithinBounds =
