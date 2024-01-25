@@ -17,6 +17,8 @@ The canvas origin is at the middle of the of canvas.
 
 Entity `x` & `y` are at the center of their shape.
 
+Z order of entities is the reverse order of the entities array (So new items will always be on top).
+
 ### Import / Export
 
 Importing will only accept JSON files that match the spec of `Canvas` (without dimensions).
