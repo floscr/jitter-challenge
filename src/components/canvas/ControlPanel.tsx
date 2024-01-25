@@ -1,5 +1,6 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 import md5 from "md5";
+import { Ok, Err, Result } from "ts-results";
 
 import * as timeline from "@/lib/timeline";
 import * as canvas from "@/lib/canvas";
@@ -7,12 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-interface ControlPanelProps {
-  canvasData: canvas.Canvas;
-  onAddRectangle: () => void;
-  setTimelineState: React.Dispatch<timeline.Timeline>;
-  timelineState: timeline.Timeline;
-}
+// Export ----------------------------------------------------------------------
 
 const downloadJson = (filename: string, jsonString: string) => {
   const blob = new Blob([jsonString], {
@@ -40,6 +36,81 @@ const exportCanvasJson = (canvas: canvas.Canvas): void => {
   const filename = `jitter_${hash}.json`;
   downloadJson(filename, json);
 };
+
+// Import ----------------------------------------------------------------------
+
+const readFile = async (file: File): Promise<canvas.Canvas> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const jsonString = event.target?.result as string;
+        const result = JSON.parse(jsonString) as canvas.Canvas;
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    reader.readAsText(file);
+  });
+};
+
+const importCanvasJson = async (
+  event: React.ChangeEvent<HTMLInputElement>,
+): Promise<Result<canvas.Canvas, Error>> => {
+  const file = event.target.files?.[0];
+  let result;
+
+  if (file) {
+    try {
+      const data = await readFile(file);
+      result = Ok(data);
+    } catch (error) {
+      console.error(error);
+      result = Err(error as Error);
+    }
+  } else {
+    result = Err(new Error("No file given"));
+  }
+
+  return result;
+};
+
+const FileUploadButton = function ({
+  onInputChange,
+  label,
+  accept = ".json",
+}: {
+  onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  label: string;
+  accept?: string;
+}) {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const onButtonClick = () => fileInputRef.current?.click();
+
+  return (
+    <>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept={accept}
+        className="hidden"
+        onChange={onInputChange}
+      />
+      <Button onClick={onButtonClick}>{label}</Button>
+    </>
+  );
+};
+
+// Component -------------------------------------------------------------------
+
+interface ControlPanelProps {
+  canvasData: canvas.Canvas;
+  onAddRectangle: () => void;
+  setTimelineState: React.Dispatch<timeline.Timeline>;
+  timelineState: timeline.Timeline;
+}
 
 const ControlPanel: React.FC<ControlPanelProps> = ({
   canvasData,
@@ -71,6 +142,13 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     [canvasData],
   );
 
+  const onImportClick = useCallback(async function (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ): Promise<void> {
+    const result = await importCanvasJson(e);
+    console.log(result);
+  }, []);
+
   return (
     <div className="flex flex-col grow space-y-6 justify-between">
       <div className="flex flex-col space-y-6">
@@ -94,7 +172,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       </div>
       <div className="flex flex-col space-y-3">
         <Button onClick={onExportClick}>Export</Button>
-        <Button>Import</Button>
+        <FileUploadButton label={"Import"} onInputChange={onImportClick} />
       </div>
     </div>
   );
