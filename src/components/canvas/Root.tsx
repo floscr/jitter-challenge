@@ -7,7 +7,7 @@ import ControlPanel from "./ControlPanel";
 
 const App: React.FC = () => {
   const [canvasData, setCanvasData] = useState<canvas.Canvas>(
-    canvas.exampleCanvas,
+    canvas.defaultCanvas,
   );
   const [timelineState, setTimelineState] = useState<timeline.Timeline>(
     timeline.init(),
