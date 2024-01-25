@@ -151,11 +151,12 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         .with({ ok: true }, ({ val }) => {
           const canvasData = val as canvas.Canvas;
           setCanvasData((state) => ({ ...state, ...canvasData }));
+          setTimelineState(timeline.stop);
         })
         .with({ ok: false }, ({ val }) => console.error(val))
         .exhaustive();
     },
-    [setCanvasData],
+    [setCanvasData, setTimelineState],
   );
 
   return (
