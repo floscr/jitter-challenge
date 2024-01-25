@@ -91,7 +91,7 @@ const updateCanvas = (
 // Hardcoded rotation angle for the animation, this would be replaced by custom keyframes in a real product
 const ROTATE_BY_DEFAULT = 360;
 
-function easeInOutCubic(t) {
+function easeInOutCubic(t: number): number {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
