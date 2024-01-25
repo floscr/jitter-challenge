@@ -94,7 +94,6 @@ const randomHexColor = () => {
 
 const randomRectangleEntity = function (canvas: Canvas): Entity {
   const dimensions = canvas.dimensions!;
-  console.table(dimensions);
 
   const width = randomRectangleSideLength();
   const height = randomRectangleSideLength();

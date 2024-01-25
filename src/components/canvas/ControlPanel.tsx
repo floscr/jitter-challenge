@@ -30,7 +30,7 @@ const downloadJson = (filename: string, jsonString: string) => {
   URL.revokeObjectURL(url);
 };
 
-const onDownloadCanvasJsonClick = (canvas: canvas.Canvas): void => {
+const exportCanvasJson = (canvas: canvas.Canvas): void => {
   const exportableCanvas = {
     entities: canvas.entities,
   };
@@ -64,19 +64,21 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     [timelineState, setTimelineState],
   );
 
-  const onDowloadClick = useCallback(
+  const onExportClick = useCallback(
     function (): void {
-      onDownloadCanvasJsonClick(canvasData);
+      exportCanvasJson(canvasData);
     },
     [canvasData],
   );
 
   return (
-    <div className="flex flex-col grow space-y-6">
+    <div className="flex flex-col grow space-y-6 justify-between">
       <div className="flex flex-col space-y-6">
         <Button onClick={(_e) => onAddRectangle()}>Add Rectangle</Button>
+      </div>
+      <div className="flex flex-col space-y-3">
         <div className="grid w-full max-w-sm items-center gap-1.5">
-          <Label htmlFor="picture">Duration</Label>
+          <Label>Duration</Label>
           <Input
             type="number"
             min={timeline.MIN_DURATION}
@@ -91,8 +93,8 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         )}
       </div>
       <div className="flex flex-col space-y-3">
+        <Button onClick={onExportClick}>Export</Button>
         <Button>Import</Button>
-        <Button onClick={onDowloadClick}>Export</Button>
       </div>
     </div>
   );
