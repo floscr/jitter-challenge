@@ -97,15 +97,40 @@ const randomHexColor = () => {
   return hexColor;
 };
 
+function rotatedRectangleBounds(
+  width: number,
+  height: number,
+  angle: number,
+): {
+  width: number;
+  height: number;
+} {
+  const radians = (angle * Math.PI) / 180;
+
+  return {
+    width:
+      Math.abs(width * Math.cos(radians)) +
+      Math.abs(height * Math.sin(radians)),
+    height:
+      Math.abs(width * Math.sin(radians)) +
+      Math.abs(height * Math.cos(radians)),
+  };
+}
+
 const randomRectangleEntity = function (canvas: Canvas): Entity {
   const dimensions = canvas.dimensions!;
   const ratio = dimensions.ratio;
 
-  const width = randomRectangleSideLength() / ratio;
-  const height = randomRectangleSideLength() / ratio;
+  const rotation = Math.random() * 360;
 
-  const canvasSideWidth = dimensions.width / 2 + width / ratio;
-  const canvasSideHeight = dimensions.height / 2 + height / ratio;
+  const { width, height } = rotatedRectangleBounds(
+    randomRectangleSideLength(),
+    randomRectangleSideLength(),
+    rotation,
+  );
+
+  const canvasSideWidth = (dimensions.width / 2 + width / 2) / ratio;
+  const canvasSideHeight = (dimensions.height / 2 + height / 2) / ratio;
 
   const x = Math.random() * canvasSideWidth * randomSign();
   const y = Math.random() * canvasSideHeight * randomSign();
@@ -119,7 +144,7 @@ const randomRectangleEntity = function (canvas: Canvas): Entity {
     y,
     width,
     height,
-    rotation: 0,
+    rotation,
     color,
   };
 };
