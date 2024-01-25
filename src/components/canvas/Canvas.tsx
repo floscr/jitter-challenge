@@ -294,7 +294,7 @@ const Canvas: React.FC<CanvasProps> = ({
     <canvas
       ref={ref}
       id="canvas"
-      className="w-full h-full"
+      className="w-full h-full select-none"
       onClick={onCanvasClick}
     />
   );
