@@ -1,3 +1,4 @@
+import { clamp } from "ramda";
 import { v4 as randomUuid } from "uuid";
 
 export interface Rectangle {
@@ -21,7 +22,62 @@ export interface Canvas {
   };
 }
 
-const randomRectangleSideLength = (): number => Math.random() * 500;
+export const defaultCanvas = {
+  entities: [],
+};
+
+export const exampleCanvas: Canvas = {
+  entities: [
+    // {
+    //   type: "rectangle",
+    //   id: randomUuid(),
+    //   x: 100,
+    //   y: 0,
+    //   width: 200,
+    //   height: 100,
+    //   rotation: 0,
+    //   color: "red",
+    // },
+    // {
+    //   type: "rectangle",
+    //   id: randomUuid(),
+    //   x: 500,
+    //   y: 100,
+    //   width: 50,
+    //   height: 200,
+    //   rotation: 0,
+    //   color: "red",
+    // },
+    // {
+    //   type: "rectangle",
+    //   id: randomUuid(),
+    //   x: 500,
+    //   y: 100,
+    //   width: 50,
+    //   height: 200,
+    //   rotation: 90,
+    //   color: "blue",
+    // },
+    // {
+    //   type: "rectangle",
+    //   id: randomUuid(),
+    //   x: 0,
+    //   y: 0,
+    //   width: 70,
+    //   height: 40,
+    //   rotation: 80,
+    //   color: "blue",
+    // },
+  ],
+};
+
+const MIN_RECTANGLE_LENGTH = 100;
+const MAX_RECTANGLE_LENGTH = 800;
+
+const randomRectangleSideLength = (): number => {
+  const side = Math.random() * 500;
+  return clamp(MIN_RECTANGLE_LENGTH, MAX_RECTANGLE_LENGTH, side);
+};
 
 const randomSign = () => (Math.random() < 0.5 ? 1 : -1);
 
@@ -37,6 +93,7 @@ const randomHexColor = () => {
 
 const randomRectangleEntity = function (canvas: Canvas): Entity {
   const dimensions = canvas.dimensions!;
+  console.table(dimensions);
 
   const width = randomRectangleSideLength();
   const height = randomRectangleSideLength();
@@ -85,54 +142,4 @@ export const randomizeRectangleColor = function (
       return entity;
     }),
   };
-};
-
-export const defaultCanvas = {
-  entities: [],
-};
-
-export const exampleCanvas: Canvas = {
-  entities: [
-    {
-      type: "rectangle",
-      id: randomUuid(),
-      x: 100,
-      y: 0,
-      width: 200,
-      height: 100,
-      rotation: 0,
-      color: "red",
-    },
-    // {
-    //   type: "rectangle",
-    //   id: randomUuid(),
-    //   x: 500,
-    //   y: 100,
-    //   width: 50,
-    //   height: 200,
-    //   rotation: 0,
-    //   color: "red",
-    // },
-    // {
-    //   type: "rectangle",
-    //   id: randomUuid(),
-    //   x: 500,
-    //   y: 100,
-    //   width: 50,
-    //   height: 200,
-    //   rotation: 90,
-    //   color: "blue",
-    // },
-
-    // {
-    //   type: "rectangle",
-    //   id: randomUuid(),
-    //   x: 0,
-    //   y: 0,
-    //   width: 70,
-    //   height: 40,
-    //   rotation: 80,
-    //   color: "blue",
-    // },
-  ],
 };
