@@ -109,7 +109,7 @@ interface ControlPanelProps {
   canvasData: canvas.Canvas;
   onAddRectangle: () => void;
   setCanvasData: React.Dispatch<React.SetStateAction<canvas.Canvas>>;
-  setTimelineState: React.Dispatch<timeline.Timeline>;
+  setTimelineState: React.Dispatch<React.SetStateAction<timeline.Timeline>>;
   timelineState: timeline.Timeline;
 }
 
