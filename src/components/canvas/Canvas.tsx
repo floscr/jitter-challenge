@@ -88,6 +88,9 @@ const updateCanvas = (
   });
 };
 
+// Hardcoded rotation angle for the animation, this would be replaced by custom keyframes in a real product
+const ROTATE_BY_DEFAULT = 180;
+
 function animateCanvasEntities({
   canvasData,
   canvasElement,
@@ -135,7 +138,7 @@ function animateCanvasEntities({
     // Possibly mutate entities if the Object copy is too slow for an animation
     const entitiesAtProgress = canvasData.entities.map((entity) => ({
       ...entity,
-      rotation: entity.rotation + 180 * progress,
+      rotation: entity.rotation + ROTATE_BY_DEFAULT * progress,
     }));
 
     updateCanvas(canvasElement, entitiesAtProgress, dimensions);
