@@ -45,7 +45,7 @@ const readFile = async (file: File): Promise<canvas.Canvas> => {
     reader.onload = async (event) => {
       try {
         const jsonString = event.target?.result as string;
-        const result = JSON.parse(jsonString) as canvas.Canvas;
+        const result = canvas.CanvasJson.parse(JSON.parse(jsonString));
         resolve(result);
       } catch (error) {
         reject(error);

@@ -1,18 +1,19 @@
 import { clamp } from "ramda";
 import { v4 as randomUuid } from "uuid";
+import { z } from "zod";
 
-export interface Rectangle {
-  type: "rectangle";
-  id: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  color: string;
-  rotation: number;
-}
+const Entity = z.object({
+  type: z.enum(["rectangle"]),
+  id: z.string().uuid(),
+  x: z.number(),
+  y: z.number(),
+  width: z.number().positive(),
+  height: z.number().positive(),
+  color: z.string(),
+  rotation: z.number(),
+});
 
-export type Entity = Rectangle;
+export type Entity = z.infer<typeof Entity>;
 
 export interface Canvas {
   entities: Array<Entity>;
@@ -26,6 +27,10 @@ export interface Canvas {
 export const defaultCanvas = {
   entities: [],
 };
+
+export const CanvasJson = z.object({
+  entities: z.array(Entity),
+});
 
 export const exampleCanvas: Canvas = {
   entities: [
