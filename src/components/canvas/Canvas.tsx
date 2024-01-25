@@ -39,6 +39,10 @@ const drawAxisLines = (
   ctx.stroke();
 };
 
+function easeInOutCubic(t) {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
 const updateCanvas = (
   canvas: HTMLCanvasElement,
   entities: canvas.Entity[],
@@ -116,10 +120,11 @@ function animateCanvasEntities({
       .with({ playState: PlayState.Playing }, () => {
         const timelineProgress = timelineState.progress || 0;
 
-        const playingProgress = Math.min(
+        const linearProgress = Math.min(
           timelineProgress + elapsed / timelineState.duration / 1000,
           1,
         );
+        const playingProgress = easeInOutCubic(linearProgress);
         progressRef.current = playingProgress;
         return playingProgress;
       })
