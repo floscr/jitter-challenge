@@ -17,6 +17,7 @@ export type Entity = Rectangle;
 export interface Canvas {
   entities: Array<Entity>;
   dimensions?: {
+    ratio: number;
     width: number;
     height: number;
   };

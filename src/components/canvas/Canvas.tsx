@@ -15,6 +15,7 @@ interface CanvasProps {
 }
 
 type Dimensions = {
+  ratio: number;
   width: number;
   height: number;
 };
@@ -49,7 +50,7 @@ const updateCanvas = (
   const ctx = canvas.getContext("2d");
 
   if (ctx) {
-    const ratio = window.devicePixelRatio || 1;
+    const { ratio } = dimensions;
 
     canvas.width = dimensions.width * ratio;
     canvas.height = dimensions.height * ratio;
@@ -102,9 +103,11 @@ const useCanvas = function (
 
       if (canvasRef) {
         const { offsetHeight: height, offsetWidth: width } = canvasRef;
+        const ratio = window.devicePixelRatio || 1;
         setCanvasData((value: types.Canvas) => ({
           ...value,
           dimensions: {
+            ratio,
             width,
             height,
           },
