@@ -21,6 +21,8 @@ Entity `x` & `y` are at the center of their shape.
 
 Importing will only accept JSON files that match the spec of `Canvas` (without dimensions).
 
+For now the duration is not saved to the JSON.
+
 ### Things I would improve/add
 
 - Use context or a state management based system and move state in one context, to not end up with a large amount of `useState` in the `<Root />` component.
@@ -30,4 +32,6 @@ Importing will only accept JSON files that match the spec of `Canvas` (without d
 - Virtualize canvas painting, only paint what is in the Viewport
 - Add unit tests
 - User friendly warnings for import/export
+- Persist duration
+- Custom easing
 
